@@ -1,0 +1,72 @@
+---
+---
+<meta charset="UTF-8" />
+<style>
+  body{
+    background:#0a0a0f;
+    color:#e5e7eb;
+    font-family:system-ui;
+  }
+
+  .container{
+    max-width:900px;
+    margin:auto;
+    padding:2rem;
+  }
+
+  .subtitle{
+    color:#9ca3af;
+    margin-bottom:2rem;
+  }
+
+  .card{
+    background:#12121a;
+    padding:1.5rem;
+    border-radius:18px;
+    border:1px solid #1f1f2e;
+    margin-top:1.5rem;
+    transition:0.3s;
+  }
+
+  .card:hover{
+    border-color:#7c3aed;
+  }
+</style>
+
+<div class="container">
+
+  <h1> Evidencias del Curso</h1>
+
+  <p class="subtitle">
+    Esta sección almacenará las evidencias del curso Bases de Datos 2 organizadas por categoría.
+  </p>
+
+  <div class="card">
+    <h2> SQL</h2>
+    <p class="subtitle">
+      Próximamente: consultas avanzadas y modelado relacional.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2> PL/SQL</h2>
+    <p class="subtitle">
+      Próximamente: procedimientos almacenados y triggers.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2> NoSQL</h2>
+    <p class="subtitle">
+      Próximamente: bases de datos no relacionales.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2> Proyecto Final</h2>
+    <p class="subtitle">
+      Próximamente: desarrollo del proyecto del semestre.
+    </p>
+  </div>
+
+</div>
