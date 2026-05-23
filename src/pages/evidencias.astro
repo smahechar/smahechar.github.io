@@ -1,307 +1,16 @@
 ---
+import '../styles/evidencias.css';
 ---
+<!DOCTYPE html>
+<html lang="es">
+<head>
 <meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Evidencias — Bases de Datos 2</title>
+</head>
+<body>
 
-<style>
-  :root {
-    --bg: #0a0a0f;
-    --card: #12121a;
-    --accent: #7c3aed;
-    --accent2: #06b6d4;
-    --text: #e5e7eb;
-    --text-soft: #9ca3af;
-    --border: #1f1f2e;
-    --code-bg: #0d0d16;
-  }
 
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-
-  body {
-    background: linear-gradient(180deg, #0a0a0f 0%, #050508 100%);
-    color: var(--text);
-    font-family: system-ui, -apple-system, sans-serif;
-    line-height: 1.6;
-  }
-
-  .container {
-    max-width: 960px;
-    margin: auto;
-    padding: 2rem 1.5rem;
-  }
-
-  /* ---- NAV ---- */
-  .topnav {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 3rem;
-  }
-  .topnav a {
-    color: var(--accent2);
-    text-decoration: none;
-    font-size: 0.9rem;
-    opacity: 0.8;
-    transition: opacity .2s;
-  }
-  .topnav a:hover { opacity: 1; }
-  .topnav span { color: var(--text-soft); font-size: 0.9rem; }
-
-  /* ---- HERO ---- */
-  .hero {
-    margin-bottom: 3rem;
-  }
-  .hero h1 {
-    font-size: 2.2rem;
-    font-weight: 800;
-    background: linear-gradient(90deg, var(--accent), var(--accent2));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    margin-bottom: 0.5rem;
-  }
-  .hero p {
-    color: var(--text-soft);
-    font-size: 1rem;
-    max-width: 620px;
-  }
-
-  /* ---- TAB BAR ---- */
-  .tabs {
-    display: flex;
-    gap: 0.5rem;
-    flex-wrap: wrap;
-    margin-bottom: 2.5rem;
-    border-bottom: 1px solid var(--border);
-    padding-bottom: 0;
-  }
-  .tab-btn {
-    padding: 0.6rem 1.2rem;
-    border: none;
-    background: transparent;
-    color: var(--text-soft);
-    cursor: pointer;
-    font-size: 0.9rem;
-    font-weight: 600;
-    border-bottom: 3px solid transparent;
-    transition: all .2s;
-    border-radius: 8px 8px 0 0;
-  }
-  .tab-btn:hover { color: var(--text); background: rgba(124,58,237,0.08); }
-  .tab-btn.active {
-    color: var(--accent);
-    border-bottom-color: var(--accent);
-    background: rgba(124,58,237,0.12);
-  }
-
-  /* ---- PANELS ---- */
-  .panel { display: none; }
-  .panel.active { display: block; }
-
-  /* ---- SECTION TITLE ---- */
-  .section-intro {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-left: 4px solid var(--accent);
-    border-radius: 12px;
-    padding: 1.25rem 1.5rem;
-    margin-bottom: 2rem;
-  }
-  .section-intro h2 {
-    font-size: 1.15rem;
-    font-weight: 700;
-    color: var(--text);
-    margin-bottom: 0.4rem;
-  }
-  .section-intro p {
-    color: var(--text-soft);
-    font-size: 0.9rem;
-  }
-
-  /* ---- EVIDENCE CARD ---- */
-  .ev-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    margin-bottom: 1.25rem;
-    overflow: hidden;
-    transition: border-color .2s;
-  }
-  .ev-card:hover { border-color: var(--accent); }
-
-  .ev-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 1rem 1.25rem;
-    cursor: pointer;
-    user-select: none;
-    gap: 1rem;
-  }
-  .ev-header-left {
-    display: flex;
-    align-items: center;
-    gap: 0.75rem;
-    flex: 1;
-    min-width: 0;
-  }
-  .ev-num {
-    font-size: 0.7rem;
-    font-weight: 700;
-    color: var(--accent);
-    background: rgba(124,58,237,0.15);
-    padding: 0.2rem 0.5rem;
-    border-radius: 6px;
-    white-space: nowrap;
-  }
-  .ev-title {
-    font-size: 0.95rem;
-    font-weight: 600;
-    color: var(--text);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-  .ev-toggle {
-    color: var(--text-soft);
-    font-size: 1.1rem;
-    transition: transform .25s;
-    flex-shrink: 0;
-  }
-  .ev-card.open .ev-toggle { transform: rotate(180deg); }
-
-  .ev-body {
-    display: none;
-    padding: 0 1.25rem 1.25rem;
-  }
-  .ev-card.open .ev-body { display: block; }
-
-  .ev-desc {
-    font-size: 0.85rem;
-    color: var(--text-soft);
-    margin-bottom: 0.75rem;
-    padding: 0.6rem 0.9rem;
-    background: rgba(6,182,212,0.06);
-    border-radius: 8px;
-    border-left: 3px solid var(--accent2);
-  }
-
-  /* ---- CODE BLOCK ---- */
-  .code-wrap {
-    position: relative;
-  }
-  pre {
-    background: var(--code-bg);
-    border: 1px solid #1a1a2e;
-    border-radius: 10px;
-    padding: 1rem 1.25rem;
-    overflow-x: auto;
-    font-size: 0.8rem;
-    line-height: 1.6;
-    max-height: 420px;
-    overflow-y: auto;
-  }
-  code {
-    font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
-    color: #c4b5fd;
-  }
-  /* Basic syntax coloring */
-  .kw  { color: #f472b6; }
-  .fn  { color: #60a5fa; }
-  .str { color: #86efac; }
-  .cm  { color: #6b7280; font-style: italic; }
-  .num { color: #fb923c; }
-
-  .copy-btn {
-    position: absolute;
-    top: 0.5rem;
-    right: 0.5rem;
-    padding: 0.3rem 0.7rem;
-    background: rgba(124,58,237,0.25);
-    border: 1px solid rgba(124,58,237,0.4);
-    color: #c4b5fd;
-    border-radius: 6px;
-    font-size: 0.75rem;
-    cursor: pointer;
-    transition: background .2s;
-    font-weight: 600;
-  }
-  .copy-btn:hover { background: rgba(124,58,237,0.45); }
-  .copy-btn.copied { background: rgba(34,197,94,0.25); color: #86efac; border-color: rgba(34,197,94,0.4); }
-
-  /* ---- LANG BADGE ---- */
-  .lang-badge {
-    display: inline-block;
-    font-size: 0.68rem;
-    font-weight: 700;
-    padding: 0.15rem 0.5rem;
-    border-radius: 5px;
-    margin-left: 0.4rem;
-    vertical-align: middle;
-  }
-  .lang-sql  { background: rgba(251,146,60,0.2); color: #fb923c; }
-  .lang-js   { background: rgba(250,204,21,0.2); color: #fbbf24; }
-  .lang-py   { background: rgba(96,165,250,0.2); color: #60a5fa; }
-  .lang-bash { background: rgba(134,239,172,0.2); color: #86efac; }
-  .lang-ini  { background: rgba(156,163,175,0.2); color: #9ca3af; }
-
-  /* ---- PATTERN CARDS ---- */
-  .pattern-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 1rem;
-    margin: 1.5rem 0;
-  }
-  .pattern-card {
-    background: #0d0d1a;
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 1rem;
-    border-top: 3px solid var(--accent);
-  }
-  .pattern-card h4 {
-    font-size: 0.85rem;
-    font-weight: 700;
-    color: var(--accent);
-    margin-bottom: 0.4rem;
-  }
-  .pattern-card p {
-    font-size: 0.8rem;
-    color: var(--text-soft);
-  }
-
-  /* ---- SUMMARY TABLE ---- */
-  .summary-table {
-    width: 100%;
-    border-collapse: collapse;
-    font-size: 0.85rem;
-    margin-top: 1rem;
-  }
-  .summary-table th {
-    background: rgba(124,58,237,0.2);
-    color: var(--accent);
-    padding: 0.6rem 0.9rem;
-    text-align: left;
-    font-weight: 700;
-    border-bottom: 1px solid var(--border);
-  }
-  .summary-table td {
-    padding: 0.55rem 0.9rem;
-    border-bottom: 1px solid var(--border);
-    color: var(--text-soft);
-  }
-  .summary-table tr:last-child td { border-bottom: none; }
-  .summary-table tr:hover td { background: rgba(124,58,237,0.05); color: var(--text); }
-
-  /* ---- FOOTER ---- */
-  footer {
-    text-align: center;
-    margin-top: 4rem;
-    padding: 2rem 0;
-    color: var(--text-soft);
-    font-size: 0.85rem;
-    border-top: 1px solid var(--border);
-  }
-</style>
 
 <div class="container">
 
@@ -312,16 +21,16 @@
   </nav>
 
   <div class="hero">
-    <h1>📚 Evidencias del Curso</h1>
+    <h1> Evidencias del Curso</h1>
     <p>Bases de Datos 2 — Proyecto SGEC y talleres aplicados. Universidad El Bosque · 2026</p>
   </div>
 
   <!-- TABS -->
   <div class="tabs">
-    <button class="tab-btn active" onclick="showTab('sgec')">🗄️ Proyecto SGEC</button>
-    <button class="tab-btn" onclick="showTab('sql')">📊 SQL Avanzado</button>
-    <button class="tab-btn" onclick="showTab('plsql')">⚙️ PL/SQL</button>
-    <button class="tab-btn" onclick="showTab('nosql')">🍃 NoSQL / MongoDB</button>
+    <button class="tab-btn active" onclick="showTab('sgec')"> Proyecto SGEC</button>
+    <button class="tab-btn" onclick="showTab('sql')"> SQL Avanzado</button>
+    <button class="tab-btn" onclick="showTab('plsql')"> PL/SQL</button>
+    <button class="tab-btn" onclick="showTab('nosql')"> NoSQL / MongoDB</button>
   </div>
 
   <!-- ======================================================== -->
@@ -346,8 +55,8 @@
         <div class="ev-desc">Comandos iniciales para conectarse a la base de datos del SGEC y listar las tablas existentes.</div>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-          <pre><code>USE bdatos2_sgec;
-SHOW TABLES;</code></pre>
+          <pre><code>{String.raw`USE bdatos2_sgec;
+SHOW TABLES;`}</code></pre>
         </div>
       </div>
     </div>
@@ -365,7 +74,7 @@ SHOW TABLES;</code></pre>
         <div class="ev-desc">Inspección de la estructura de las tablas clave del sistema SGEC.</div>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-          <pre><code>DESCRIBE usuario;
+          <pre><code>{String.raw`DESCRIBE usuario;
 DESCRIBE espacio;
 DESCRIBE reserva;
 DESCRIBE horario_semestre;
@@ -373,7 +82,7 @@ DESCRIBE historial;
 DESCRIBE mantenimiento;
 DESCRIBE ticket_docente;
 DESCRIBE grupo_clase;
-DESCRIBE clase;</code></pre>
+DESCRIBE clase;`}</code></pre>
         </div>
       </div>
     </div>
@@ -391,14 +100,14 @@ DESCRIBE clase;</code></pre>
         <div class="ev-desc">Lista todos los usuarios del sistema junto con su rol asignado mediante un JOIN relacional.</div>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-          <pre><code>SELECT
+          <pre><code>{String.raw`SELECT
     u.id_usuario,
     u.nombre,
     u.correo,
     r.nombre_rol
 FROM usuario u
 JOIN rol r ON r.id_rol = u.id_rol
-ORDER BY u.id_usuario;</code></pre>
+ORDER BY u.id_usuario;`}</code></pre>
         </div>
       </div>
     </div>
@@ -416,7 +125,7 @@ ORDER BY u.id_usuario;</code></pre>
         <div class="ev-desc">Consultas para analizar espacios disponibles: por estado, bloque, capacidad y agrupaciones.</div>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-          <pre><code>-- Espacios disponibles
+          <pre><code>{String.raw`-- Espacios disponibles
 SELECT id_espacio, codigo, nombre, capacidad, estado
 FROM espacio WHERE estado = 'Disponible' ORDER BY codigo;
 
@@ -432,7 +141,7 @@ SELECT estado, COUNT(*) AS total FROM espacio GROUP BY estado;
 -- Salones disponibles por capacidad
 SELECT capacidad, COUNT(*) AS total_salones
 FROM espacio WHERE estado = 'Disponible'
-GROUP BY capacidad ORDER BY capacidad;</code></pre>
+GROUP BY capacidad ORDER BY capacidad;`}</code></pre>
         </div>
       </div>
     </div>
@@ -450,7 +159,7 @@ GROUP BY capacidad ORDER BY capacidad;</code></pre>
         <div class="ev-desc">Consultas sobre clases registradas, grupos activos, grupos con más estudiantes y docentes asignados por grupo.</div>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-          <pre><code>-- Ver clases registradas
+          <pre><code>{String.raw`-- Ver clases registradas
 SELECT id_clase, nombre, codigo_clase, tipo_clase,
        requiere_computadores, estado
 FROM clase ORDER BY nombre;
@@ -471,7 +180,7 @@ FROM docente_grupo_clase dgc
 JOIN usuario u ON u.id_usuario = dgc.id_usuario
 JOIN grupo_clase g ON g.id_grupo_clase = dgc.id_grupo_clase
 JOIN clase c ON c.id_clase = g.id_clase
-ORDER BY u.nombre, c.nombre;</code></pre>
+ORDER BY u.nombre, c.nombre;`}</code></pre>
         </div>
       </div>
     </div>
@@ -489,43 +198,29 @@ ORDER BY u.nombre, c.nombre;</code></pre>
         <div class="ev-desc">Consultas de reservas recientes, automáticas, conteos por origen, distribución por salón y detección de conflictos de horario.</div>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-          <pre><code>-- Reservas recientes (últimas 20)
-SELECT r.id_reserva, u.nombre AS usuario, e.codigo AS salon,
-       r.fecha_reserva, r.hora_inicio, r.hora_fin,
-       r.estado_reserva, r.origen
-FROM reserva r
-JOIN usuario u ON u.id_usuario = r.id_usuario
-JOIN espacio e ON e.id_espacio = r.id_espacio
-ORDER BY r.id_reserva DESC LIMIT 20;
+          <pre><code>{String.raw`-- Reservas recientes (últimas 20)
+          SELECT r.id_reserva, u.nombre AS usuario, e.codigo AS salon,
+                r.fecha_reserva, r.hora_inicio, r.hora_fin,
+                r.estado_reserva, r.origen
+          FROM reserva r
+          JOIN usuario u ON u.id_usuario = r.id_usuario
+          JOIN espacio e ON e.id_espacio = r.id_espacio
+          ORDER BY r.id_reserva DESC LIMIT 20;
 
--- Contar por origen
-SELECT COUNT(*) AS reservas_semestrales
-FROM reserva WHERE origen = 'SEMESTRAL';
+          -- Contar por origen
+          SELECT COUNT(*) AS reservas_semestrales
+          FROM reserva WHERE origen = 'SEMESTRAL';
 
-SELECT COUNT(*) AS reservas_manuales
-FROM reserva WHERE origen = 'MANUAL';
+          SELECT COUNT(*) AS reservas_manuales
+          FROM reserva WHERE origen = 'MANUAL';
 
--- Reservas por salón
-SELECT e.codigo, e.capacidad, COUNT(*) AS total_reservas
-FROM reserva r
-JOIN espacio e ON e.id_espacio = r.id_espacio
-WHERE r.origen = 'SEMESTRAL'
-GROUP BY e.codigo, e.capacidad
-ORDER BY total_reservas DESC;
-
--- Verificar conflictos de horario para un espacio
-SELECT r.id_reserva, e.codigo, r.fecha_reserva,
-       r.hora_inicio, r.hora_fin, r.estado_reserva
-FROM reserva r
-JOIN espacio e ON e.id_espacio = r.id_espacio
-WHERE r.id_espacio = 5
-  AND r.fecha_reserva = '2026-05-25'
-  AND r.estado_reserva = 'Activa'
-  AND (
-        ('09:00:00' >= r.hora_inicio AND '09:00:00' < r.hora_fin)
-     OR ('11:00:00' > r.hora_inicio AND '11:00:00' <= r.hora_fin)
-     OR ('09:00:00' <= r.hora_inicio AND '11:00:00' >= r.hora_fin)
-  );</code></pre>
+          -- Reservas por salón
+          SELECT e.codigo, e.capacidad, COUNT(*) AS total_reservas
+          FROM reserva r
+          JOIN espacio e ON e.id_espacio = r.id_espacio
+          WHERE r.origen = 'SEMESTRAL'
+          GROUP BY e.codigo, e.capacidad
+          ORDER BY total_reservas DESC;`}</code></pre>
         </div>
       </div>
     </div>
@@ -543,7 +238,7 @@ WHERE r.id_espacio = 5
         <div class="ev-desc">Consultas del módulo de asignación semestral automática: horarios activos, distribución por salón, docentes asignados, y limpieza de asignación.</div>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-          <pre><code>-- Horarios semestrales activos (vista completa)
+          <pre><code>{String.raw`-- Horarios semestrales activos (vista completa)
 SELECT hs.id_horario, c.nombre AS clase,
        g.codigo_grupo, g.cantidad_estudiantes,
        e.codigo AS salon, e.capacidad,
@@ -567,7 +262,7 @@ SELECT
 
 -- Limpiar asignación automática
 DELETE FROM reserva WHERE origen = 'SEMESTRAL';
-DELETE FROM horario_semestre WHERE estado = 'Activo';</code></pre>
+DELETE FROM horario_semestre WHERE estado = 'Activo';`}</code></pre>
         </div>
       </div>
     </div>
@@ -585,7 +280,7 @@ DELETE FROM horario_semestre WHERE estado = 'Activo';</code></pre>
         <div class="ev-desc">Trigger AFTER UPDATE que registra automáticamente cada cambio de estado de un espacio en la tabla de historial, garantizando trazabilidad.</div>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-          <pre><code>USE bdatos2_sgec;
+          <pre><code>{String.raw`USE bdatos2_sgec;
 DROP TRIGGER IF EXISTS trg_historial_cambio_estado_espacio;
 DELIMITER $$
 
@@ -609,7 +304,7 @@ DELIMITER ;
 -- Prueba del trigger
 UPDATE espacio SET estado = 'Mantenimiento' WHERE id_espacio = 1;
 SELECT * FROM historial ORDER BY id_historial DESC LIMIT 5;
-UPDATE espacio SET estado = 'Disponible' WHERE id_espacio = 1;</code></pre>
+UPDATE espacio SET estado = 'Disponible' WHERE id_espacio = 1;`}</code></pre>
         </div>
       </div>
     </div>
@@ -627,7 +322,7 @@ UPDATE espacio SET estado = 'Disponible' WHERE id_espacio = 1;</code></pre>
         <div class="ev-desc">Procedimiento que valida disponibilidad del espacio y ausencia de conflictos de horario antes de insertar una reserva. Usa SIGNAL para errores de negocio.</div>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-          <pre><code>USE bdatos2_sgec;
+          <pre><code>{String.raw`USE bdatos2_sgec;
 DROP PROCEDURE IF EXISTS crear_reserva_segura;
 DELIMITER $$
 
@@ -677,7 +372,7 @@ END$$
 DELIMITER ;
 
 -- Llamar procedimiento
-CALL crear_reserva_segura(1, 5, '2026-05-25', '09:00:00', '11:00:00');</code></pre>
+CALL crear_reserva_segura(1, 5, '2026-05-25', '09:00:00', '11:00:00');`}</code></pre>
         </div>
       </div>
     </div>
@@ -695,7 +390,7 @@ CALL crear_reserva_segura(1, 5, '2026-05-25', '09:00:00', '11:00:00');</code></p
         <div class="ev-desc">Colecciones MongoDB del SGEC: audit_logs, eventos_seguridad, eventos_asignacion y estadísticas. Consultas de login, asignaciones semestrales y dashboard rápido.</div>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-          <pre><code>// Conectar a la base
+          <pre><code>{String.raw`// Conectar a la base
 mongosh "mongodb://192.168.56.101:27018/sgec_logs?directConnection=true"
 use sgec_logs
 
@@ -727,7 +422,7 @@ db.audit_logs.aggregate([
   { $match: { accion: "ASIGNACION_SEMESTRAL" } },
   { $group: { _id: "$extra.salon", total: { $sum: 1 } } },
   { $sort: { total: -1 } }
-])</code></pre>
+])`}</code></pre>
         </div>
       </div>
     </div>
@@ -788,7 +483,7 @@ db.audit_logs.aggregate([
         <div class="ev-desc">Cruza empleados, departamentos, estadísticas departamentales e historial laboral en una sola pasada. Calcula brecha porcentual al promedio y ranking salarial con DENSE_RANK().</div>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-          <pre><code>WITH
+          <pre><code>{String.raw`WITH
 params AS (
     SELECT excluded_department_id, min_years_service,
            recent_job_history_months, gap_high_threshold_pct,
@@ -828,7 +523,7 @@ FROM t1_employees e
 LEFT JOIN t1_departments d  ON d.department_id  = e.department_id
 LEFT JOIN dept_stats      ds ON ds.department_id = e.department_id
 LEFT JOIN recent_hist     rh ON rh.employee_id   = e.employee_id
-ORDER BY e.department_id NULLS LAST, e.salary DESC;</code></pre>
+ORDER BY e.department_id NULLS LAST, e.salary DESC;`}</code></pre>
         </div>
       </div>
     </div>
@@ -846,7 +541,7 @@ ORDER BY e.department_id NULLS LAST, e.salary DESC;</code></pre>
         <div class="ev-desc">Aplica todas las reglas de exclusión de la variante 2 en orden de severidad y asigna AJUSTE_ALTO (8%), AJUSTE_MEDIO (5%) o AJUSTE_BAJO (3%) a los elegibles.</div>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-          <pre><code>-- Criterios de exclusión aplicados en orden:
+          <pre><code>{String.raw`-- Criterios de exclusión aplicados en orden:
 -- SIN_DEPARTAMENTO → DEPTO_EXCLUIDO (60) → DEPTO_MENOR_A_3
 -- → ANTIGUEDAD_INSUFICIENTE (<3 años) → HISTORIAL_RECIENTE (18 m)
 -- → MANAGER_O_DIRECTIVO → SALARIO_NO_APLICA (≥ 120% avg)
@@ -867,7 +562,7 @@ CASE
     WHEN pct_gap_to_avg > gap_high_threshold_pct THEN raise_high_pct -- AJUSTE_ALTO  8%
     WHEN pct_gap_to_avg > gap_mid_threshold_pct  THEN raise_mid_pct  -- AJUSTE_MEDIO 5%
     ELSE raise_low_pct                                                -- AJUSTE_BAJO  3%
-END AS adjustment_pct</code></pre>
+END AS adjustment_pct`}</code></pre>
         </div>
       </div>
     </div>
@@ -885,7 +580,7 @@ END AS adjustment_pct</code></pre>
         <div class="ev-desc">MERGE actualiza salarios de elegibles respetando el tope (LEAST). INSERT registra la auditoría. SAVEPOINT permite revertir si la validación intermedia detecta incumplimientos.</div>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-          <pre><code>SAVEPOINT sv_before_adjustment;
+          <pre><code>{String.raw`SAVEPOINT sv_before_adjustment;
 
 -- Actualizar salarios con tope
 MERGE INTO t1_employees tgt
@@ -914,7 +609,7 @@ SELECT employee_id, salary_after, allowed_max_salary,
 FROM audit_salary_adjustments_t1
 WHERE execution_tag = '&p_execution_tag';
 
-COMMIT; -- Si todo cumple. Si no: ROLLBACK TO SAVEPOINT sv_before_adjustment;</code></pre>
+COMMIT; -- Si todo cumple. Si no: ROLLBACK TO SAVEPOINT sv_before_adjustment;`}</code></pre>
         </div>
       </div>
     </div>
@@ -966,7 +661,7 @@ COMMIT; -- Si todo cumple. Si no: ROLLBACK TO SAVEPOINT sv_before_adjustment;</c
         <div class="ev-desc">Usa CONNECT BY LEVEL para contar divisores del día actual y determinar si es primo. Demuestra variables %TYPE, subquery escalar y lógica condicional.</div>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-          <pre><code>DECLARE
+          <pre><code>{String.raw`DECLARE
     vd_fecha TIMESTAMP := SYSTIMESTAMP;
     vn_primo NUMBER;
 BEGIN
@@ -985,7 +680,7 @@ BEGIN
         dbms_output.put_line('No es primo');
     END IF;
 END;
-/</code></pre>
+/`}</code></pre>
         </div>
       </div>
     </div>
@@ -1003,7 +698,7 @@ END;
         <div class="ev-desc">Cuatro funciones encadenadas: fn_salario_base_q (PLANTA/TEMPORAL/SERVICIOS), fn_recargos (cursor explícito), fn_bonificacion (antigüedad + sanciones), fn_bruto (auxilio + bono sede).</div>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-          <pre><code>-- fn_salario_base_q: divide por tipo de contrato
+          <pre><code>{String.raw`-- fn_salario_base_q: divide por tipo de contrato
 CREATE OR REPLACE FUNCTION fn_salario_base_q(
     p_id_empleado NUMBER, p_id_quincena VARCHAR2
 ) RETURN NUMBER IS ...
@@ -1023,7 +718,7 @@ CREATE OR REPLACE FUNCTION fn_recargos(
 -- Se anula si tiene >2 sanciones en los últimos 6 meses
 
 -- fn_bruto: suma base + recargos + bono + auxilio_transporte + bono_sede
--- Auxilio solo si salario_mensual ≤ 2×SMLMV</code></pre>
+-- Auxilio solo si salario_mensual ≤ 2×SMLMV`}</code></pre>
         </div>
       </div>
     </div>
@@ -1041,7 +736,7 @@ CREATE OR REPLACE FUNCTION fn_recargos(
         <div class="ev-desc">Valida existencia, estado ACTIVO y no-duplicado. Calcula bruto, deducciones (salud, pensión, fondo solidaridad, embargo, libranzas, aporte voluntario) y ajusta neto negativo en dos pasos.</div>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-          <pre><code>CREATE OR REPLACE PROCEDURE sp_liquidar_empleado(
+          <pre><code>{String.raw`CREATE OR REPLACE PROCEDURE sp_liquidar_empleado(
     p_id_empleado NUMBER, p_id_quincena VARCHAR2
 ) IS
     e_no_activo EXCEPTION;
@@ -1069,7 +764,7 @@ BEGIN
 EXCEPTION
     WHEN OTHERS THEN ROLLBACK; RAISE;
 END sp_liquidar_empleado;
-/</code></pre>
+/`}</code></pre>
         </div>
       </div>
     </div>
@@ -1087,7 +782,7 @@ END sp_liquidar_empleado;
         <div class="ev-desc">Package completo con caché de parámetros, liquidación individual y masiva (BULK COLLECT + FORALL + SAVE EXCEPTIONS), función pipelined con SQL dinámico y auditoría con AUTONOMOUS_TRANSACTION.</div>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-          <pre><code>-- Puntos clave del package body:
+          <pre><code>{String.raw`-- Puntos clave del package body:
 
 -- Punto 6: BULK COLLECT + FORALL
 SELECT id_empleado BULK COLLECT INTO v_ids
@@ -1126,7 +821,7 @@ END;
 BEGIN
     PKG_NOMINA.sp_liquidar_quincena('2026-Q1-ENE');
 END;
-/</code></pre>
+/`}</code></pre>
         </div>
       </div>
     </div>
@@ -1144,7 +839,7 @@ END;
         <div class="ev-desc">Trigger compuesto con tres secciones: BEFORE EACH ROW (validaciones + ajuste neto negativo), AFTER EACH ROW (log alertas + actualizar saldo libranzas), AFTER STATEMENT (log del lote).</div>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-          <pre><code>CREATE OR REPLACE TRIGGER trg_liquidacion_compound
+          <pre><code>{String.raw`CREATE OR REPLACE TRIGGER trg_liquidacion_compound
 FOR INSERT ON LIQUIDACION
 COMPOUND TRIGGER
 
@@ -1177,7 +872,7 @@ AFTER STATEMENT IS BEGIN
 END AFTER STATEMENT;
 
 END trg_liquidacion_compound;
-/</code></pre>
+/`}</code></pre>
         </div>
       </div>
     </div>
@@ -1206,7 +901,7 @@ END trg_liquidacion_compound;
         <div class="ev-desc">Cinco formas de insertar documentos: básico, con objeto anidado address (Chile), insertMany, con array amenities, y demostración de unicidad de _id.</div>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-          <pre><code>use("sample_airbnb");
+          <pre><code>{String.raw`use("sample_airbnb");
 
 // Listing básico
 db.listingsAndReviews.insertOne({
@@ -1243,7 +938,7 @@ db.listingsAndReviews.insertOne({
 });
 
 // Restricción _id único (genera error si ya existe)
-db.listingsAndReviews.insertOne({ _id: 10006546, name: "Ribeira Charming Duplex" });</code></pre>
+db.listingsAndReviews.insertOne({ _id: 10006546, name: "Ribeira Charming Duplex" });`}</code></pre>
         </div>
       </div>
     </div>
@@ -1261,7 +956,7 @@ db.listingsAndReviews.insertOne({ _id: 10006546, name: "Ribeira Charming Duplex"
         <div class="ev-desc">Consultas de filtrado y proyección usando operadores de comparación, pertenencia a array, regex case-insensitive, tamaño de array, sort descendente y manejo de campos nulos.</div>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-          <pre><code>// Listings en Brazil
+          <pre><code>{String.raw`// Listings en Brazil
 db.listingsAndReviews.find(
   { "address.country": "Brazil" },
   { name: 1, price: 1, _id: 0 }
@@ -1311,7 +1006,7 @@ db.listingsAndReviews.find({}, { name: 1, price: 1, "address.country": 1, _id: 0
 db.listingsAndReviews.find(
   { $or: [{ last_review: { $exists: false } }, { last_review: null }] },
   { name: 1, number_of_reviews: 1, _id: 0 }
-).sort({ number_of_reviews: -1 });</code></pre>
+).sort({ number_of_reviews: -1 });`}</code></pre>
         </div>
       </div>
     </div>
@@ -1329,7 +1024,7 @@ db.listingsAndReviews.find(
         <div class="ev-desc">updateOne y updateMany con operadores $set, $push (agregar al array), $inc (incrementar), $pull (eliminar del array) y upsert para insertar si no existe.</div>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-          <pre><code>// Cambiar property_type
+          <pre><code>{String.raw`// Cambiar property_type
 db.listingsAndReviews.updateOne(
   { name: "Cozy Cabin Retreat" },
   { $set: { property_type: "Entire home/apt" } }
@@ -1358,7 +1053,7 @@ db.listingsAndReviews.updateOne(
   { name: "Mansión de Prueba" },
   { $set: { price: NumberDecimal("1500.00"), "address.country": "United States" } },
   { upsert: true }
-);</code></pre>
+);`}</code></pre>
         </div>
       </div>
     </div>
@@ -1376,7 +1071,7 @@ db.listingsAndReviews.updateOne(
         <div class="ev-desc">Pipeline de agregación: precio promedio por país, top 5 amenities, listings por property_type, análisis de review scores, y agrupación por rangos de precio con $bucket.</div>
         <div class="code-wrap">
           <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
-          <pre><code>// Precio promedio por país
+          <pre><code>{String.raw`// Precio promedio por país
 db.listingsAndReviews.aggregate([
   { $group: {
       _id: "$address.country",
@@ -1416,7 +1111,7 @@ db.listingsAndReviews.aggregate([
       default: "1000+",
       output: { cantidad: { $sum: 1 }, precio_promedio: { $avg: { $toDouble: "$price" }}}
   }}
-]);</code></pre>
+]);`}</code></pre>
         </div>
       </div>
     </div>
@@ -1429,7 +1124,7 @@ db.listingsAndReviews.aggregate([
 
 </div>
 
-<script>
+<script is:inline>
   function showTab(id) {
     document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
@@ -1451,3 +1146,5 @@ db.listingsAndReviews.aggregate([
     });
   }
 </script>
+</body>
+</html>
