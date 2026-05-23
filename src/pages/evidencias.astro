@@ -1,74 +1,1453 @@
 ---
 ---
 <meta charset="UTF-8" />
-
+<title>Evidencias — Bases de Datos 2</title>
 
 <style>
-  body{
-    background:#0a0a0f;
-    color:#e5e7eb;
-    font-family:system-ui;
+  :root {
+    --bg: #0a0a0f;
+    --card: #12121a;
+    --accent: #7c3aed;
+    --accent2: #06b6d4;
+    --text: #e5e7eb;
+    --text-soft: #9ca3af;
+    --border: #1f1f2e;
+    --code-bg: #0d0d16;
   }
 
-  .container{
-    max-width:900px;
-    margin:auto;
-    padding:2rem;
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: linear-gradient(180deg, #0a0a0f 0%, #050508 100%);
+    color: var(--text);
+    font-family: system-ui, -apple-system, sans-serif;
+    line-height: 1.6;
   }
 
-  .subtitle{
-    color:#9ca3af;
-    margin-bottom:2rem;
+  .container {
+    max-width: 960px;
+    margin: auto;
+    padding: 2rem 1.5rem;
   }
 
-  .card{
-    background:#12121a;
-    padding:1.5rem;
-    border-radius:18px;
-    border:1px solid #1f1f2e;
-    margin-top:1.5rem;
-    transition:0.3s;
+  /* ---- NAV ---- */
+  .topnav {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 3rem;
+  }
+  .topnav a {
+    color: var(--accent2);
+    text-decoration: none;
+    font-size: 0.9rem;
+    opacity: 0.8;
+    transition: opacity .2s;
+  }
+  .topnav a:hover { opacity: 1; }
+  .topnav span { color: var(--text-soft); font-size: 0.9rem; }
+
+  /* ---- HERO ---- */
+  .hero {
+    margin-bottom: 3rem;
+  }
+  .hero h1 {
+    font-size: 2.2rem;
+    font-weight: 800;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    margin-bottom: 0.5rem;
+  }
+  .hero p {
+    color: var(--text-soft);
+    font-size: 1rem;
+    max-width: 620px;
   }
 
-  .card:hover{
-    border-color:#7c3aed;
+  /* ---- TAB BAR ---- */
+  .tabs {
+    display: flex;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-bottom: 2.5rem;
+    border-bottom: 1px solid var(--border);
+    padding-bottom: 0;
+  }
+  .tab-btn {
+    padding: 0.6rem 1.2rem;
+    border: none;
+    background: transparent;
+    color: var(--text-soft);
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-bottom: 3px solid transparent;
+    transition: all .2s;
+    border-radius: 8px 8px 0 0;
+  }
+  .tab-btn:hover { color: var(--text); background: rgba(124,58,237,0.08); }
+  .tab-btn.active {
+    color: var(--accent);
+    border-bottom-color: var(--accent);
+    background: rgba(124,58,237,0.12);
+  }
+
+  /* ---- PANELS ---- */
+  .panel { display: none; }
+  .panel.active { display: block; }
+
+  /* ---- SECTION TITLE ---- */
+  .section-intro {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-left: 4px solid var(--accent);
+    border-radius: 12px;
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 2rem;
+  }
+  .section-intro h2 {
+    font-size: 1.15rem;
+    font-weight: 700;
+    color: var(--text);
+    margin-bottom: 0.4rem;
+  }
+  .section-intro p {
+    color: var(--text-soft);
+    font-size: 0.9rem;
+  }
+
+  /* ---- EVIDENCE CARD ---- */
+  .ev-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    margin-bottom: 1.25rem;
+    overflow: hidden;
+    transition: border-color .2s;
+  }
+  .ev-card:hover { border-color: var(--accent); }
+
+  .ev-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    cursor: pointer;
+    user-select: none;
+    gap: 1rem;
+  }
+  .ev-header-left {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+    min-width: 0;
+  }
+  .ev-num {
+    font-size: 0.7rem;
+    font-weight: 700;
+    color: var(--accent);
+    background: rgba(124,58,237,0.15);
+    padding: 0.2rem 0.5rem;
+    border-radius: 6px;
+    white-space: nowrap;
+  }
+  .ev-title {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .ev-toggle {
+    color: var(--text-soft);
+    font-size: 1.1rem;
+    transition: transform .25s;
+    flex-shrink: 0;
+  }
+  .ev-card.open .ev-toggle { transform: rotate(180deg); }
+
+  .ev-body {
+    display: none;
+    padding: 0 1.25rem 1.25rem;
+  }
+  .ev-card.open .ev-body { display: block; }
+
+  .ev-desc {
+    font-size: 0.85rem;
+    color: var(--text-soft);
+    margin-bottom: 0.75rem;
+    padding: 0.6rem 0.9rem;
+    background: rgba(6,182,212,0.06);
+    border-radius: 8px;
+    border-left: 3px solid var(--accent2);
+  }
+
+  /* ---- CODE BLOCK ---- */
+  .code-wrap {
+    position: relative;
+  }
+  pre {
+    background: var(--code-bg);
+    border: 1px solid #1a1a2e;
+    border-radius: 10px;
+    padding: 1rem 1.25rem;
+    overflow-x: auto;
+    font-size: 0.8rem;
+    line-height: 1.6;
+    max-height: 420px;
+    overflow-y: auto;
+  }
+  code {
+    font-family: 'Fira Code', 'Cascadia Code', 'Consolas', monospace;
+    color: #c4b5fd;
+  }
+  /* Basic syntax coloring */
+  .kw  { color: #f472b6; }
+  .fn  { color: #60a5fa; }
+  .str { color: #86efac; }
+  .cm  { color: #6b7280; font-style: italic; }
+  .num { color: #fb923c; }
+
+  .copy-btn {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    padding: 0.3rem 0.7rem;
+    background: rgba(124,58,237,0.25);
+    border: 1px solid rgba(124,58,237,0.4);
+    color: #c4b5fd;
+    border-radius: 6px;
+    font-size: 0.75rem;
+    cursor: pointer;
+    transition: background .2s;
+    font-weight: 600;
+  }
+  .copy-btn:hover { background: rgba(124,58,237,0.45); }
+  .copy-btn.copied { background: rgba(34,197,94,0.25); color: #86efac; border-color: rgba(34,197,94,0.4); }
+
+  /* ---- LANG BADGE ---- */
+  .lang-badge {
+    display: inline-block;
+    font-size: 0.68rem;
+    font-weight: 700;
+    padding: 0.15rem 0.5rem;
+    border-radius: 5px;
+    margin-left: 0.4rem;
+    vertical-align: middle;
+  }
+  .lang-sql  { background: rgba(251,146,60,0.2); color: #fb923c; }
+  .lang-js   { background: rgba(250,204,21,0.2); color: #fbbf24; }
+  .lang-py   { background: rgba(96,165,250,0.2); color: #60a5fa; }
+  .lang-bash { background: rgba(134,239,172,0.2); color: #86efac; }
+  .lang-ini  { background: rgba(156,163,175,0.2); color: #9ca3af; }
+
+  /* ---- PATTERN CARDS ---- */
+  .pattern-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+  }
+  .pattern-card {
+    background: #0d0d1a;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 1rem;
+    border-top: 3px solid var(--accent);
+  }
+  .pattern-card h4 {
+    font-size: 0.85rem;
+    font-weight: 700;
+    color: var(--accent);
+    margin-bottom: 0.4rem;
+  }
+  .pattern-card p {
+    font-size: 0.8rem;
+    color: var(--text-soft);
+  }
+
+  /* ---- SUMMARY TABLE ---- */
+  .summary-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.85rem;
+    margin-top: 1rem;
+  }
+  .summary-table th {
+    background: rgba(124,58,237,0.2);
+    color: var(--accent);
+    padding: 0.6rem 0.9rem;
+    text-align: left;
+    font-weight: 700;
+    border-bottom: 1px solid var(--border);
+  }
+  .summary-table td {
+    padding: 0.55rem 0.9rem;
+    border-bottom: 1px solid var(--border);
+    color: var(--text-soft);
+  }
+  .summary-table tr:last-child td { border-bottom: none; }
+  .summary-table tr:hover td { background: rgba(124,58,237,0.05); color: var(--text); }
+
+  /* ---- FOOTER ---- */
+  footer {
+    text-align: center;
+    margin-top: 4rem;
+    padding: 2rem 0;
+    color: var(--text-soft);
+    font-size: 0.85rem;
+    border-top: 1px solid var(--border);
   }
 </style>
 
 <div class="container">
 
-  <h1> Evidencias del Curso</h1>
+  <nav class="topnav">
+    <a href="/">← Inicio</a>
+    <span>/</span>
+    <span>Evidencias BD2</span>
+  </nav>
 
-  <p class="subtitle">
-    Esta sección almacenará las evidencias del curso Bases de Datos 2 organizadas por categoría.
-  </p>
-
-  <div class="card">
-    <h2> SQL</h2>
-    <p class="subtitle">
-      Próximamente: consultas avanzadas y modelado relacional.
-    </p>
+  <div class="hero">
+    <h1>📚 Evidencias del Curso</h1>
+    <p>Bases de Datos 2 — Proyecto SGEC y talleres aplicados. Universidad El Bosque · 2026</p>
   </div>
 
-  <div class="card">
-    <h2> PL/SQL</h2>
-    <p class="subtitle">
-      Próximamente: procedimientos almacenados y triggers.
-    </p>
+  <!-- TABS -->
+  <div class="tabs">
+    <button class="tab-btn active" onclick="showTab('sgec')">🗄️ Proyecto SGEC</button>
+    <button class="tab-btn" onclick="showTab('sql')">📊 SQL Avanzado</button>
+    <button class="tab-btn" onclick="showTab('plsql')">⚙️ PL/SQL</button>
+    <button class="tab-btn" onclick="showTab('nosql')">🍃 NoSQL / MongoDB</button>
   </div>
 
-  <div class="card">
-    <h2> NoSQL</h2>
-    <p class="subtitle">
-      Próximamente: bases de datos no relacionales.
-    </p>
-  </div>
+  <!-- ======================================================== -->
+  <!-- PANEL 1: PROYECTO SGEC -->
+  <!-- ======================================================== -->
+  <div id="tab-sgec" class="panel active">
+    <div class="section-intro">
+      <h2>Sistema de Gestión de Espacios Colaborativos (SGEC)</h2>
+      <p>Consultas reales del proyecto: usuarios, espacios, reservas, horarios semestrales, Tailor Made, mantenimiento, tickets, triggers, procedimientos y colecciones MongoDB de auditoría y seguridad.</p>
+    </div>
 
-  <div class="card">
-    <h2> Proyecto Final</h2>
-    <p class="subtitle">
-      Próximamente: desarrollo del proyecto del semestre.
-    </p>
-  </div>
+    <!-- 1.1 -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">1.1</span>
+          <span class="ev-title">Seleccionar base de datos y ver tablas</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">Comandos iniciales para conectarse a la base de datos del SGEC y listar las tablas existentes.</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre><code>USE bdatos2_sgec;
+SHOW TABLES;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1.2 -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">1.3</span>
+          <span class="ev-title">Revisar estructura de tablas principales</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">Inspección de la estructura de las tablas clave del sistema SGEC.</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre><code>DESCRIBE usuario;
+DESCRIBE espacio;
+DESCRIBE reserva;
+DESCRIBE horario_semestre;
+DESCRIBE historial;
+DESCRIBE mantenimiento;
+DESCRIBE ticket_docente;
+DESCRIBE grupo_clase;
+DESCRIBE clase;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1.4 -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">1.4</span>
+          <span class="ev-title">Ver usuarios y roles (JOIN)</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">Lista todos los usuarios del sistema junto con su rol asignado mediante un JOIN relacional.</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre><code>SELECT
+    u.id_usuario,
+    u.nombre,
+    u.correo,
+    r.nombre_rol
+FROM usuario u
+JOIN rol r ON r.id_rol = u.id_rol
+ORDER BY u.id_usuario;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- 1.5 -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">1.5–1.8</span>
+          <span class="ev-title">Consultas de espacios (disponibilidad, bloques, capacidad)</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">Consultas para analizar espacios disponibles: por estado, bloque, capacidad y agrupaciones.</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre><code>-- Espacios disponibles
+SELECT id_espacio, codigo, nombre, capacidad, estado
+FROM espacio WHERE estado = 'Disponible' ORDER BY codigo;
+
+-- Espacios por bloque
+SELECT b.nombre_bloque, e.codigo, e.nombre, e.capacidad, e.estado
+FROM espacio e
+JOIN bloque b ON b.id_bloque = e.id_bloque
+ORDER BY b.nombre_bloque, e.codigo;
+
+-- Cantidad de espacios por estado
+SELECT estado, COUNT(*) AS total FROM espacio GROUP BY estado;
+
+-- Salones disponibles por capacidad
+SELECT capacidad, COUNT(*) AS total_salones
+FROM espacio WHERE estado = 'Disponible'
+GROUP BY capacidad ORDER BY capacidad;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Grupos y clases -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">2.1–2.4</span>
+          <span class="ev-title">Clases, grupos y docentes asignados</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">Consultas sobre clases registradas, grupos activos, grupos con más estudiantes y docentes asignados por grupo.</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre><code>-- Ver clases registradas
+SELECT id_clase, nombre, codigo_clase, tipo_clase,
+       requiere_computadores, estado
+FROM clase ORDER BY nombre;
+
+-- Ver grupos con más estudiantes
+SELECT g.id_grupo_clase, c.nombre AS clase,
+       g.codigo_grupo, g.cantidad_estudiantes
+FROM grupo_clase g
+JOIN clase c ON c.id_clase = g.id_clase
+WHERE g.estado = 'Activo'
+ORDER BY g.cantidad_estudiantes DESC;
+
+-- Docentes asignados a grupos
+SELECT u.nombre AS docente, u.correo,
+       c.nombre AS clase, g.codigo_grupo,
+       g.cantidad_estudiantes, dgc.estado
+FROM docente_grupo_clase dgc
+JOIN usuario u ON u.id_usuario = dgc.id_usuario
+JOIN grupo_clase g ON g.id_grupo_clase = dgc.id_grupo_clase
+JOIN clase c ON c.id_clase = g.id_clase
+ORDER BY u.nombre, c.nombre;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reservas -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">3.1–3.6</span>
+          <span class="ev-title">Gestión de reservas (manuales, semestrales, conflictos)</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">Consultas de reservas recientes, automáticas, conteos por origen, distribución por salón y detección de conflictos de horario.</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre><code>-- Reservas recientes (últimas 20)
+SELECT r.id_reserva, u.nombre AS usuario, e.codigo AS salon,
+       r.fecha_reserva, r.hora_inicio, r.hora_fin,
+       r.estado_reserva, r.origen
+FROM reserva r
+JOIN usuario u ON u.id_usuario = r.id_usuario
+JOIN espacio e ON e.id_espacio = r.id_espacio
+ORDER BY r.id_reserva DESC LIMIT 20;
+
+-- Contar por origen
+SELECT COUNT(*) AS reservas_semestrales
+FROM reserva WHERE origen = 'SEMESTRAL';
+
+SELECT COUNT(*) AS reservas_manuales
+FROM reserva WHERE origen = 'MANUAL';
+
+-- Reservas por salón
+SELECT e.codigo, e.capacidad, COUNT(*) AS total_reservas
+FROM reserva r
+JOIN espacio e ON e.id_espacio = r.id_espacio
+WHERE r.origen = 'SEMESTRAL'
+GROUP BY e.codigo, e.capacidad
+ORDER BY total_reservas DESC;
+
+-- Verificar conflictos de horario para un espacio
+SELECT r.id_reserva, e.codigo, r.fecha_reserva,
+       r.hora_inicio, r.hora_fin, r.estado_reserva
+FROM reserva r
+JOIN espacio e ON e.id_espacio = r.id_espacio
+WHERE r.id_espacio = 5
+  AND r.fecha_reserva = '2026-05-25'
+  AND r.estado_reserva = 'Activa'
+  AND (
+        ('09:00:00' >= r.hora_inicio AND '09:00:00' < r.hora_fin)
+     OR ('11:00:00' > r.hora_inicio AND '11:00:00' <= r.hora_fin)
+     OR ('09:00:00' <= r.hora_inicio AND '11:00:00' >= r.hora_fin)
+  );</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tailor Made -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">4.1–4.7</span>
+          <span class="ev-title">Algoritmo Tailor Made — asignación automática de salones</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">Consultas del módulo de asignación semestral automática: horarios activos, distribución por salón, docentes asignados, y limpieza de asignación.</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre><code>-- Horarios semestrales activos (vista completa)
+SELECT hs.id_horario, c.nombre AS clase,
+       g.codigo_grupo, g.cantidad_estudiantes,
+       e.codigo AS salon, e.capacidad,
+       hs.dia_semana, hs.hora_inicio, hs.hora_fin,
+       hs.diferencia_capacidad, hs.criterio_asignacion, hs.estado
+FROM horario_semestre hs
+JOIN grupo_clase g ON g.id_grupo_clase = hs.id_grupo_clase
+JOIN clase c ON c.id_clase = g.id_clase
+JOIN espacio e ON e.id_espacio = hs.id_espacio
+WHERE hs.estado = 'Activo'
+ORDER BY
+    FIELD(hs.dia_semana,'Lunes','Martes','Miércoles','Jueves','Viernes'),
+    hs.hora_inicio;
+
+-- Comparar salones usados vs. disponibles
+SELECT
+    (SELECT COUNT(DISTINCT id_espacio) FROM horario_semestre
+     WHERE estado = 'Activo') AS salones_usados,
+    (SELECT COUNT(*) FROM espacio
+     WHERE estado = 'Disponible') AS salones_disponibles;
+
+-- Limpiar asignación automática
+DELETE FROM reserva WHERE origen = 'SEMESTRAL';
+DELETE FROM horario_semestre WHERE estado = 'Activo';</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trigger -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">6.2</span>
+          <span class="ev-title">Trigger — historial de cambios de estado de espacios</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">Trigger AFTER UPDATE que registra automáticamente cada cambio de estado de un espacio en la tabla de historial, garantizando trazabilidad.</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre><code>USE bdatos2_sgec;
+DROP TRIGGER IF EXISTS trg_historial_cambio_estado_espacio;
+DELIMITER $$
+
+CREATE TRIGGER trg_historial_cambio_estado_espacio
+AFTER UPDATE ON espacio
+FOR EACH ROW
+BEGIN
+    IF OLD.estado <> NEW.estado THEN
+        INSERT INTO historial (
+            id_espacio, estado_anterior, estado_nuevo,
+            fecha_cambio, hora_cambio, responsable_cambio, observacion
+        ) VALUES (
+            NEW.id_espacio, OLD.estado, NEW.estado,
+            CURDATE(), CURTIME(), NULL,
+            CONCAT('Cambio automático de estado del espacio ', NEW.codigo)
+        );
+    END IF;
+END$$
+DELIMITER ;
+
+-- Prueba del trigger
+UPDATE espacio SET estado = 'Mantenimiento' WHERE id_espacio = 1;
+SELECT * FROM historial ORDER BY id_historial DESC LIMIT 5;
+UPDATE espacio SET estado = 'Disponible' WHERE id_espacio = 1;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Procedimiento almacenado -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">7.1</span>
+          <span class="ev-title">Procedimiento almacenado — crear_reserva_segura</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">Procedimiento que valida disponibilidad del espacio y ausencia de conflictos de horario antes de insertar una reserva. Usa SIGNAL para errores de negocio.</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre><code>USE bdatos2_sgec;
+DROP PROCEDURE IF EXISTS crear_reserva_segura;
+DELIMITER $$
+
+CREATE PROCEDURE crear_reserva_segura(
+    IN p_id_usuario INT,
+    IN p_id_espacio INT,
+    IN p_fecha_reserva DATE,
+    IN p_hora_inicio TIME,
+    IN p_hora_fin TIME
+)
+BEGIN
+    DECLARE v_total_conflictos INT DEFAULT 0;
+    DECLARE v_estado_espacio VARCHAR(50);
+
+    SELECT estado INTO v_estado_espacio
+    FROM espacio WHERE id_espacio = p_id_espacio LIMIT 1;
+
+    IF v_estado_espacio <> 'Disponible' THEN
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'El espacio no está disponible para reservar.';
+    END IF;
+
+    SELECT COUNT(*) INTO v_total_conflictos
+    FROM reserva
+    WHERE id_espacio = p_id_espacio
+      AND fecha_reserva = p_fecha_reserva
+      AND estado_reserva = 'Activa'
+      AND (
+            (p_hora_inicio >= hora_inicio AND p_hora_inicio < hora_fin)
+         OR (p_hora_fin > hora_inicio AND p_hora_fin <= hora_fin)
+         OR (p_hora_inicio <= hora_inicio AND p_hora_fin >= hora_fin)
+      );
+
+    IF v_total_conflictos = 0 THEN
+        INSERT INTO reserva (
+            id_usuario, id_espacio, fecha_reserva,
+            hora_inicio, hora_fin, estado_reserva, origen
+        ) VALUES (
+            p_id_usuario, p_id_espacio, p_fecha_reserva,
+            p_hora_inicio, p_hora_fin, 'Activa', 'MANUAL'
+        );
+    ELSE
+        SIGNAL SQLSTATE '45000'
+        SET MESSAGE_TEXT = 'Ya existe una reserva activa para ese espacio en ese horario.';
+    END IF;
+END$$
+DELIMITER ;
+
+-- Llamar procedimiento
+CALL crear_reserva_segura(1, 5, '2026-05-25', '09:00:00', '11:00:00');</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- MongoDB SGEC -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">10–16</span>
+          <span class="ev-title">MongoDB SGEC — Auditorías, seguridad y estadísticas</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">Colecciones MongoDB del SGEC: audit_logs, eventos_seguridad, eventos_asignacion y estadísticas. Consultas de login, asignaciones semestrales y dashboard rápido.</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre><code>// Conectar a la base
+mongosh "mongodb://192.168.56.101:27018/sgec_logs?directConnection=true"
+use sgec_logs
+
+// Dashboard rápido — resumen general
+printjson({
+  audit_logs:               db.audit_logs.countDocuments(),
+  eventos_asignacion:       db.eventos_asignacion.countDocuments(),
+  eventos_seguridad:        db.eventos_seguridad.countDocuments(),
+  estadisticas:             db.estadisticas.countDocuments(),
+  asignaciones_semestrales: db.audit_logs.countDocuments({ accion: "ASIGNACION_SEMESTRAL" }),
+  login_fallidos:           db.eventos_seguridad.countDocuments({ tipo: "LOGIN_FAIL" })
+})
+
+// Últimas auditorías
+db.audit_logs.find().sort({ fecha: -1 }).limit(10).pretty()
+
+// Login exitoso / fallido
+db.audit_logs.find({ accion: "LOGIN_OK" }).sort({ fecha: -1 }).limit(10)
+db.audit_logs.find({ accion: "LOGIN_FAIL" }).sort({ fecha: -1 }).limit(10)
+
+// Agrupar eventos de seguridad por tipo
+db.eventos_seguridad.aggregate([
+  { $group: { _id: "$tipo", total: { $sum: 1 } } },
+  { $sort: { total: -1 } }
+])
+
+// Asignaciones por salón
+db.audit_logs.aggregate([
+  { $match: { accion: "ASIGNACION_SEMESTRAL" } },
+  { $group: { _id: "$extra.salon", total: { $sum: 1 } } },
+  { $sort: { total: -1 } }
+])</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Patrones NoSQL -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">18</span>
+          <span class="ev-title">Patrones de diseño NoSQL aplicados en SGEC</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">Cuatro patrones de diseño MongoDB identificados e implementados en el proyecto SGEC.</div>
+        <div class="pattern-grid">
+          <div class="pattern-card">
+            <h4>Polymorphic Pattern</h4>
+            <p>Colección <code>audit_logs</code> almacena eventos de distintos tipos (LOGIN_OK, LOGIN_FAIL, ASIGNACION_SEMESTRAL) con campos base comunes y datos extras variables.</p>
+          </div>
+          <div class="pattern-card">
+            <h4>Computed Pattern</h4>
+            <p>Colección <code>estadisticas</code> guarda resultados ya calculados (totales de reservas, asignaciones, conflictos) para reportes rápidos sin recalcular.</p>
+          </div>
+          <div class="pattern-card">
+            <h4>Subset Pattern</h4>
+            <p>Colección <code>eventos_seguridad</code> proyecta solo los campos relevantes (fecha, tipo, correo, IP) sin exponer el documento completo.</p>
+          </div>
+          <div class="pattern-card">
+            <h4>Extended Reference</h4>
+            <p>Colecciones <code>eventos_asignacion</code> y <code>audit_logs</code> guardan tanto el ID de MySQL como datos descriptivos (clase, salón, capacidad) para no consultar de nuevo.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-sgec -->
+
+  <!-- ======================================================== -->
+  <!-- PANEL 2: SQL AVANZADO -->
+  <!-- ======================================================== -->
+  <div id="tab-sql" class="panel">
+    <div class="section-intro">
+      <h2>Taller SQL Avanzado — Ajuste Salarial (Oracle)</h2>
+      <p>Taller aplicado con CTE, funciones analíticas (DENSE_RANK), MERGE, transacciones ACID con SAVEPOINT, auditoría y validación de topes. Variante 2 del taller (departamento 60 excluido, 18 meses historial).</p>
+    </div>
+
+    <!-- Diagnóstica -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">1</span>
+          <span class="ev-title">Consulta diagnóstica — CTEs + DENSE_RANK + antigüedad</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">Cruza empleados, departamentos, estadísticas departamentales e historial laboral en una sola pasada. Calcula brecha porcentual al promedio y ranking salarial con DENSE_RANK().</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre><code>WITH
+params AS (
+    SELECT excluded_department_id, min_years_service,
+           recent_job_history_months, gap_high_threshold_pct,
+           gap_mid_threshold_pct, raise_high_pct, raise_mid_pct,
+           raise_low_pct, max_salary_vs_avg_pct
+    FROM t1_variants WHERE variant_id = &p_variant_id
+),
+dept_stats AS (
+    SELECT department_id,
+           AVG(salary)  AS dept_avg_salary,
+           MAX(salary)  AS dept_max_salary,
+           COUNT(*)     AS dept_employee_count
+    FROM t1_employees
+    WHERE department_id IS NOT NULL
+    GROUP BY department_id
+),
+recent_hist AS (
+    SELECT DISTINCT jh.employee_id
+    FROM t1_job_history jh
+    CROSS JOIN params p
+    WHERE jh.start_date >= ADD_MONTHS(TRUNC(SYSDATE), -p.recent_job_history_months)
+       OR jh.end_date   >= ADD_MONTHS(TRUNC(SYSDATE), -p.recent_job_history_months)
+)
+SELECT
+    e.employee_id, e.first_name, e.last_name,
+    e.department_id, d.department_name, e.salary,
+    TRUNC(MONTHS_BETWEEN(TRUNC(SYSDATE), e.hire_date)/12) AS years_service,
+    ROUND(ds.dept_avg_salary, 2) AS dept_avg_salary,
+    ROUND((ds.dept_avg_salary - e.salary) / NULLIF(ds.dept_avg_salary,0)*100, 4)
+        AS pct_gap_to_avg,
+    CASE WHEN rh.employee_id IS NOT NULL THEN 'SI' ELSE 'NO' END
+        AS recent_job_history_flag,
+    DENSE_RANK() OVER (
+        PARTITION BY e.department_id ORDER BY e.salary DESC
+    ) AS salary_rank_in_department
+FROM t1_employees e
+LEFT JOIN t1_departments d  ON d.department_id  = e.department_id
+LEFT JOIN dept_stats      ds ON ds.department_id = e.department_id
+LEFT JOIN recent_hist     rh ON rh.employee_id   = e.employee_id
+ORDER BY e.department_id NULLS LAST, e.salary DESC;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Elegibles -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">2</span>
+          <span class="ev-title">Decisión de elegibilidad — reglas de exclusión y ajuste</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">Aplica todas las reglas de exclusión de la variante 2 en orden de severidad y asigna AJUSTE_ALTO (8%), AJUSTE_MEDIO (5%) o AJUSTE_BAJO (3%) a los elegibles.</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre><code>-- Criterios de exclusión aplicados en orden:
+-- SIN_DEPARTAMENTO → DEPTO_EXCLUIDO (60) → DEPTO_MENOR_A_3
+-- → ANTIGUEDAD_INSUFICIENTE (<3 años) → HISTORIAL_RECIENTE (18 m)
+-- → MANAGER_O_DIRECTIVO → SALARIO_NO_APLICA (≥ 120% avg)
+
+CASE
+    WHEN department_id IS NULL               THEN 'NO_ELEGIBLE' -- SIN_DEPARTAMENTO
+    WHEN department_id = excluded_dept_id    THEN 'NO_ELEGIBLE' -- DEPTO_EXCLUIDO
+    WHEN dept_employee_count < 3             THEN 'NO_ELEGIBLE' -- DEPTO_MENOR_A_3
+    WHEN years_service < min_years_service   THEN 'NO_ELEGIBLE' -- ANTIGUEDAD_INSUFICIENTE
+    WHEN recent_job_history_flag = 'SI'      THEN 'NO_ELEGIBLE' -- HISTORIAL_RECIENTE
+    WHEN manager_or_exec_flag = 'SI'         THEN 'NO_ELEGIBLE' -- MANAGER_O_DIRECTIVO
+    WHEN salary >= dept_avg * max_pct / 100  THEN 'NO_ELEGIBLE' -- SALARIO_NO_APLICA
+    ELSE 'ELEGIBLE'
+END AS eligibility_flag,
+
+-- Porcentaje de ajuste para elegibles
+CASE
+    WHEN pct_gap_to_avg > gap_high_threshold_pct THEN raise_high_pct -- AJUSTE_ALTO  8%
+    WHEN pct_gap_to_avg > gap_mid_threshold_pct  THEN raise_mid_pct  -- AJUSTE_MEDIO 5%
+    ELSE raise_low_pct                                                -- AJUSTE_BAJO  3%
+END AS adjustment_pct</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- MERGE transaccional -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">4</span>
+          <span class="ev-title">Ejecución transaccional — MERGE + INSERT auditoría + SAVEPOINT</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">MERGE actualiza salarios de elegibles respetando el tope (LEAST). INSERT registra la auditoría. SAVEPOINT permite revertir si la validación intermedia detecta incumplimientos.</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre><code>SAVEPOINT sv_before_adjustment;
+
+-- Actualizar salarios con tope
+MERGE INTO t1_employees tgt
+USING (
+    -- CTE con elegibles calculados
+    SELECT e.employee_id, e.salary AS salary_before,
+           ds.dept_avg_salary,
+           CASE WHEN pct_gap > gap_high THEN raise_high
+                WHEN pct_gap > gap_mid  THEN raise_mid
+                ELSE raise_low END AS adjustment_pct,
+           p.max_salary_vs_avg_pct
+    FROM ... -- elegibles
+) src
+ON (tgt.employee_id = src.employee_id)
+WHEN MATCHED THEN UPDATE SET
+    tgt.salary = LEAST(
+        ROUND(src.salary_before * (1 + src.adjustment_pct / 100), 2),
+        ROUND(src.dept_avg_salary * src.max_salary_vs_avg_pct / 100, 2)
+    );
+
+-- Validación intermedia (debe mostrar solo CUMPLE)
+SELECT employee_id, salary_after, allowed_max_salary,
+       CASE WHEN salary_after <= allowed_max_salary
+            THEN 'CUMPLE' ELSE 'INCUMPLE - SUPERA TOPE'
+       END AS validation_status
+FROM audit_salary_adjustments_t1
+WHERE execution_tag = '&p_execution_tag';
+
+COMMIT; -- Si todo cumple. Si no: ROLLBACK TO SAVEPOINT sv_before_adjustment;</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- ACID -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">6</span>
+          <span class="ev-title">Justificación técnica ACID</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">Análisis de las cuatro propiedades ACID aplicadas en el taller salarial.</div>
+        <table class="summary-table">
+          <thead><tr><th>Propiedad</th><th>Implementación</th></tr></thead>
+          <tbody>
+            <tr><td><strong>Atomicidad</strong></td><td>SAVEPOINT agrupa MERGE + INSERT en una unidad. ROLLBACK TO SAVEPOINT deshace ambas operaciones si falla cualquiera.</td></tr>
+            <tr><td><strong>Consistencia</strong></td><td>PK, NOT NULL y el tope LEAST() garantizan que ningún salario viole el límite acordado (120% avg). Validación intermedia confirma.</td></tr>
+            <tr><td><strong>Aislamiento</strong></td><td>Oracle aplica READ COMMITTED por defecto. Otras sesiones ven salarios originales (MVCC) hasta el COMMIT.</td></tr>
+            <tr><td><strong>Durabilidad</strong></td><td>El COMMIT escribe en el redo log antes de devolver el control, asegurando recuperación ante fallos.</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div><!-- /tab-sql -->
+
+  <!-- ======================================================== -->
+  <!-- PANEL 3: PL/SQL -->
+  <!-- ======================================================== -->
+  <div id="tab-plsql" class="panel">
+    <div class="section-intro">
+      <h2>Taller PL/SQL — Sistema de Liquidación de Nómina (HotelGroup S.A.)</h2>
+      <p>Bloque anónimo individual, funciones standalone, procedimiento con excepciones, package PKG_NOMINA (BULK COLLECT, FORALL, SAVE EXCEPTIONS, pipelined function, AUTONOMOUS_TRANSACTION) y trigger compuesto.</p>
+    </div>
+
+    <!-- Bloque anónimo día primo -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">3.1</span>
+          <span class="ev-title">Bloque anónimo — verificar si el día actual es número primo</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">Usa CONNECT BY LEVEL para contar divisores del día actual y determinar si es primo. Demuestra variables %TYPE, subquery escalar y lógica condicional.</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre><code>DECLARE
+    vd_fecha TIMESTAMP := SYSTIMESTAMP;
+    vn_primo NUMBER;
+BEGIN
+    SELECT COUNT(*) INTO vn_primo FROM dual
+    WHERE (
+        SELECT COUNT(*) FROM (
+            SELECT LEVEL i FROM dual
+            CONNECT BY LEVEL <= TO_CHAR(SYSDATE, 'DD')
+        )
+        WHERE MOD(TO_CHAR(SYSDATE, 'DD'), i) = 0
+    ) = 2;
+
+    IF vn_primo = 1 THEN
+        dbms_output.put_line('Es primo');
+    ELSE
+        dbms_output.put_line('No es primo');
+    END IF;
+END;
+/</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Funciones -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">2.1–2.4</span>
+          <span class="ev-title">Funciones standalone — salario base, recargos, bonificación, bruto</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">Cuatro funciones encadenadas: fn_salario_base_q (PLANTA/TEMPORAL/SERVICIOS), fn_recargos (cursor explícito), fn_bonificacion (antigüedad + sanciones), fn_bruto (auxilio + bono sede).</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre><code>-- fn_salario_base_q: divide por tipo de contrato
+CREATE OR REPLACE FUNCTION fn_salario_base_q(
+    p_id_empleado NUMBER, p_id_quincena VARCHAR2
+) RETURN NUMBER IS ...
+-- PLANTA → salario/2 | TEMPORAL → salario×horas_normales | SERVICIOS → (salario - retención)/2
+
+-- fn_recargos: cursor explícito por tipo de hora
+CREATE OR REPLACE FUNCTION fn_recargos(
+    p_id_empleado NUMBER, p_id_quincena VARCHAR2
+) RETURN NUMBER IS
+    CURSOR cur_horas(p_emp NUMBER, p_quin VARCHAR2) IS
+        SELECT tipo_hora, cantidad_horas
+        FROM HORAS_TRABAJADAS WHERE ...;
+-- Acumula: NOCTURNA × rec_noct, DOMINICAL × rec_dom, NOCTURNA_DOM × rec_ndom
+
+-- fn_bonificacion: antigüedad + sanciones
+-- 3–5 años → 3% | 6–10 → 6% | >10 → 10%
+-- Se anula si tiene >2 sanciones en los últimos 6 meses
+
+-- fn_bruto: suma base + recargos + bono + auxilio_transporte + bono_sede
+-- Auxilio solo si salario_mensual ≤ 2×SMLMV</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Procedimiento -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">3</span>
+          <span class="ev-title">Procedimiento sp_liquidar_empleado — excepciones y ROLLBACK</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">Valida existencia, estado ACTIVO y no-duplicado. Calcula bruto, deducciones (salud, pensión, fondo solidaridad, embargo, libranzas, aporte voluntario) y ajusta neto negativo en dos pasos.</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre><code>CREATE OR REPLACE PROCEDURE sp_liquidar_empleado(
+    p_id_empleado NUMBER, p_id_quincena VARCHAR2
+) IS
+    e_no_activo EXCEPTION;
+    e_ya_existe EXCEPTION;
+BEGIN
+    -- Validación 1: empleado existe
+    -- Validación 2: estado = 'ACTIVO' → RAISE_APPLICATION_ERROR(-20002, ...)
+    -- Validación 3: no existe ya la liquidación → RAISE_APPLICATION_ERROR(-20003, ...)
+
+    -- Calcular componentes (llama a fn_salario_base_q, fn_recargos, fn_bonificacion)
+    -- Deducciones en orden: salud → pensión → fondo solidaridad → embargo → libranzas → aporte_vol
+
+    -- Ajuste neto negativo (Regla 8):
+    IF v_neto < 0 THEN
+        v_total_ded := v_total_ded - v_embargo; v_embargo := 0;
+        v_neto := v_bruto - v_total_ded;
+        IF v_neto < 0 THEN
+            v_total_ded := v_total_ded - v_libranzas; v_libranzas := 0;
+            v_neto := v_bruto - v_total_ded;
+        END IF;
+    END IF;
+
+    INSERT INTO LIQUIDACION (...) VALUES (...);
+    COMMIT;
+EXCEPTION
+    WHEN OTHERS THEN ROLLBACK; RAISE;
+END sp_liquidar_empleado;
+/</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Package -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">4</span>
+          <span class="ev-title">Package PKG_NOMINA — BULK COLLECT, FORALL, SAVE EXCEPTIONS, Pipelined</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">Package completo con caché de parámetros, liquidación individual y masiva (BULK COLLECT + FORALL + SAVE EXCEPTIONS), función pipelined con SQL dinámico y auditoría con AUTONOMOUS_TRANSACTION.</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre><code>-- Puntos clave del package body:
+
+-- Punto 6: BULK COLLECT + FORALL
+SELECT id_empleado BULK COLLECT INTO v_ids
+FROM EMPLEADOS WHERE estado = 'ACTIVO'
+  AND id_empleado NOT IN (
+      SELECT id_empleado FROM LIQUIDACION WHERE id_quincena = p_id_quincena
+  );
+
+-- Calcular cada liquidación en bucle FOR + llenar arrays
+-- Luego insertar masivamente:
+FORALL i IN 1..v_ids.COUNT SAVE EXCEPTIONS
+    INSERT INTO LIQUIDACION (...) VALUES (v_arr_id(i), v_ids(i), ...);
+
+-- Punto 7: Función pipelined con SQL dinámico
+FUNCTION fn_reporte_nomina(p_cod_sede VARCHAR2, p_tipo_contrato VARCHAR2)
+RETURN t_lista_liq PIPELINED IS
+    TYPE t_cur IS REF CURSOR;
+    v_cur t_cur;
+    v_sql VARCHAR2(2000);
+BEGIN
+    v_sql := 'SELECT ... FROM LIQUIDACION l JOIN EMPLEADOS e ... WHERE 1=1 ';
+    IF p_cod_sede IS NOT NULL THEN v_sql := v_sql || 'AND e.cod_sede = :sede '; END IF;
+    OPEN v_cur FOR v_sql USING p_cod_sede;
+    LOOP FETCH v_cur INTO v_fila; EXIT WHEN v_cur%NOTFOUND; PIPE ROW(v_fila); END LOOP;
+END;
+
+-- Punto 8: AUTONOMOUS_TRANSACTION para log de auditoría
+PROCEDURE sp_log_nomina(...) IS
+    PRAGMA AUTONOMOUS_TRANSACTION;
+BEGIN
+    INSERT INTO LOG_NOMINA (...) VALUES (...);
+    COMMIT; -- No afecta la transacción principal
+END;
+
+-- Uso del package
+BEGIN
+    PKG_NOMINA.sp_liquidar_quincena('2026-Q1-ENE');
+END;
+/</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Trigger compuesto -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">5</span>
+          <span class="ev-title">Compound Trigger sobre LIQUIDACION</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">Trigger compuesto con tres secciones: BEFORE EACH ROW (validaciones + ajuste neto negativo), AFTER EACH ROW (log alertas + actualizar saldo libranzas), AFTER STATEMENT (log del lote).</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre><code>CREATE OR REPLACE TRIGGER trg_liquidacion_compound
+FOR INSERT ON LIQUIDACION
+COMPOUND TRIGGER
+
+    -- Estado compartido entre secciones
+    TYPE t_alertas_tab IS TABLE OF t_alerta INDEX BY PLS_INTEGER;
+    v_alertas t_alertas_tab;
+
+BEFORE EACH ROW IS BEGIN
+    -- Valida salario_base_q >= 0
+    IF :NEW.salario_base_q < 0 THEN
+        RAISE_APPLICATION_ERROR(-20010, 'Salario base no puede ser negativo');
+    END IF;
+    -- Ajusta neto negativo (elimina embargo, luego libranzas)
+    IF :NEW.neto < 0 THEN
+        :NEW.total_deducciones := :NEW.total_deducciones - :NEW.embargo;
+        :NEW.embargo := 0;
+        -- ... registra alerta para AFTER EACH ROW
+    END IF;
+END BEFORE EACH ROW;
+
+AFTER EACH ROW IS BEGIN
+    -- Registra alerta en LOG_NOMINA
+    -- Actualiza saldo_pendiente de LIBRANZAS activas
+END AFTER EACH ROW;
+
+AFTER STATEMENT IS BEGIN
+    -- Log del lote completo
+    INSERT INTO LOG_NOMINA (...) VALUES (...);
+    v_alertas.DELETE; -- Limpiar para el siguiente lote
+END AFTER STATEMENT;
+
+END trg_liquidacion_compound;
+/</code></pre>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-plsql -->
+
+  <!-- ======================================================== -->
+  <!-- PANEL 4: NoSQL -->
+  <!-- ======================================================== -->
+  <div id="tab-nosql" class="panel">
+    <div class="section-intro">
+      <h2>Taller MongoDB — sample_airbnb</h2>
+      <p>30 ejercicios MQL sobre la colección <code>listingsAndReviews</code>: inserción, consultas con operadores, filtros por arrays, actualizaciones, pipeline de agregación ($group, $unwind, $bucket, $lookup) y análisis por fechas.</p>
+    </div>
+
+    <!-- Insert -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">1–5</span>
+          <span class="ev-title">Inserción — insertOne, insertMany, documento anidado, arrays, _id único</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">Cinco formas de insertar documentos: básico, con objeto anidado address (Chile), insertMany, con array amenities, y demostración de unicidad de _id.</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre><code>use("sample_airbnb");
+
+// Listing básico
+db.listingsAndReviews.insertOne({
+  name: "Cozy Cabin Retreat",
+  property_type: "Cabin",
+  price: NumberDecimal("150.00")
+});
+
+// Con objeto address anidado
+db.listingsAndReviews.insertOne({
+  name: "Casa en Santiago",
+  property_type: "House",
+  price: NumberDecimal("200.00"),
+  address: {
+    street: "Av. Providencia 123",
+    government_area: "Santiago",
+    country: "Chile",
+    country_code: "CL",
+    location: { type: "Point", coordinates: [-70.6483, -33.4372] }
+  }
+});
+
+// insertMany
+db.listingsAndReviews.insertMany([
+  { name: "Studio de Arte Urbano", property_type: "Apartment", price: NumberDecimal("80.00") },
+  { name: "Loft Minimalista", property_type: "Loft", price: NumberDecimal("110.00") }
+]);
+
+// Con array amenities
+db.listingsAndReviews.insertOne({
+  name: "Apartamento con Comodidades Premium",
+  price: NumberDecimal("175.00"),
+  amenities: ["Wifi","Kitchen","Free parking","Air conditioning","Washer","TV"]
+});
+
+// Restricción _id único (genera error si ya existe)
+db.listingsAndReviews.insertOne({ _id: 10006546, name: "Ribeira Charming Duplex" });</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Consultas básicas -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">6–15</span>
+          <span class="ev-title">Consultas — $gt, $lt, $in, $regex, $size, sort, limit, $exists</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">Consultas de filtrado y proyección usando operadores de comparación, pertenencia a array, regex case-insensitive, tamaño de array, sort descendente y manejo de campos nulos.</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre><code>// Listings en Brazil
+db.listingsAndReviews.find(
+  { "address.country": "Brazil" },
+  { name: 1, price: 1, _id: 0 }
+);
+
+// Más de 5 beds
+db.listingsAndReviews.find(
+  { beds: { $gt: 5 } },
+  { name: 1, number_of_reviews: 1, _id: 0 }
+);
+
+// Precio menor a 75
+db.listingsAndReviews.find(
+  { price: { $lt: NumberDecimal("75.00") } },
+  { name: 1, price: 1, property_type: 1, _id: 0 }
+);
+
+// House o Condominium ($in)
+db.listingsAndReviews.find(
+  { property_type: { $in: ["House", "Condominium"] } },
+  { name: 1, property_type: 1, _id: 0 }
+);
+
+// Nombre contiene "Luxury" (regex case-insensitive)
+db.listingsAndReviews.find(
+  { name: { $regex: "Luxury", $options: "i" } },
+  { name: 1, _id: 0 }
+);
+
+// Con amenity específico
+db.listingsAndReviews.find(
+  { amenities: "Heating" },
+  { name: 1, amenities: 1, _id: 0 }
+);
+
+// Exactamente 20 amenities ($size)
+db.listingsAndReviews.find(
+  { amenities: { $size: 20 } },
+  { name: 1, _id: 0 }
+);
+
+// Top 10 más caros
+db.listingsAndReviews.find({}, { name: 1, price: 1, "address.country": 1, _id: 0 })
+  .sort({ price: -1 }).limit(10);
+
+// Sin last_review
+db.listingsAndReviews.find(
+  { $or: [{ last_review: { $exists: false } }, { last_review: null }] },
+  { name: 1, number_of_reviews: 1, _id: 0 }
+).sort({ number_of_reviews: -1 });</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actualizaciones -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">16–20</span>
+          <span class="ev-title">Actualizaciones — $set, $push, $inc, $pull, upsert</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">updateOne y updateMany con operadores $set, $push (agregar al array), $inc (incrementar), $pull (eliminar del array) y upsert para insertar si no existe.</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre><code>// Cambiar property_type
+db.listingsAndReviews.updateOne(
+  { name: "Cozy Cabin Retreat" },
+  { $set: { property_type: "Entire home/apt" } }
+);
+
+// $set + $push en una sola operación
+db.listingsAndReviews.updateOne(
+  { name: "Casa en Santiago" },
+  { $set: { last_scraped: new Date() }, $push: { amenities: "Smart TV" } }
+);
+
+// Incrementar reviews en España ($inc)
+db.listingsAndReviews.updateMany(
+  { "address.country": "Spain" },
+  { $inc: { number_of_reviews: 1 } }
+);
+
+// Eliminar "Cable TV" del array ($pull)
+db.listingsAndReviews.updateMany(
+  { amenities: "Cable TV" },
+  { $pull: { amenities: "Cable TV" } }
+);
+
+// upsert: actualiza o inserta si no existe
+db.listingsAndReviews.updateOne(
+  { name: "Mansión de Prueba" },
+  { $set: { price: NumberDecimal("1500.00"), "address.country": "United States" } },
+  { upsert: true }
+);</code></pre>
+        </div>
+      </div>
+    </div>
+
+    <!-- Agregaciones -->
+    <div class="ev-card">
+      <div class="ev-header" onclick="toggle(this)">
+        <div class="ev-header-left">
+          <span class="ev-num">21–27</span>
+          <span class="ev-title">Agregaciones — $group, $unwind, $bucket, $match, $count</span>
+        </div>
+        <span class="ev-toggle">▼</span>
+      </div>
+      <div class="ev-body">
+        <div class="ev-desc">Pipeline de agregación: precio promedio por país, top 5 amenities, listings por property_type, análisis de review scores, y agrupación por rangos de precio con $bucket.</div>
+        <div class="code-wrap">
+          <button class="copy-btn" onclick="copyCode(this)">Copiar</button>
+          <pre><code>// Precio promedio por país
+db.listingsAndReviews.aggregate([
+  { $group: {
+      _id: "$address.country",
+      precio_promedio: { $avg: { $toDouble: "$price" } },
+      total_listings: { $sum: 1 }
+  }},
+  { $sort: { precio_promedio: -1 } },
+  { $project: { pais: "$_id", precio_promedio: { $round: ["$precio_promedio", 2] }, _id: 0 }}
+]);
+
+// Top 5 amenities más comunes ($unwind + $group)
+db.listingsAndReviews.aggregate([
+  { $unwind: "$amenities" },
+  { $group: { _id: "$amenities", frecuencia: { $sum: 1 } } },
+  { $sort: { frecuencia: -1 } },
+  { $limit: 5 },
+  { $project: { amenity: "$_id", frecuencia: 1, _id: 0 }}
+]);
+
+// Review scores de listings con ≥10 reviews
+db.listingsAndReviews.aggregate([
+  { $match: { number_of_reviews: { $gte: 10 } }},
+  { $group: {
+      _id: null,
+      promedio_rating: { $avg: "$review_scores.review_scores_rating" },
+      total_listings: { $sum: 1 },
+      max_rating: { $max: "$review_scores.review_scores_rating" }
+  }}
+]);
+
+// Rangos de precio con $bucket
+db.listingsAndReviews.aggregate([
+  { $match: { price: { $gt: NumberDecimal("0") }}},
+  { $bucket: {
+      groupBy: { $toDouble: "$price" },
+      boundaries: [0, 101, 301, 1001],
+      default: "1000+",
+      output: { cantidad: { $sum: 1 }, precio_promedio: { $avg: { $toDouble: "$price" }}}
+  }}
+]);</code></pre>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /tab-nosql -->
+
+  <footer>
+    © 2026 · Sergio Andrés Mahecha Rodríguez · Bases de Datos 2 · Universidad El Bosque
+  </footer>
 
 </div>
+
+<script>
+  function showTab(id) {
+    document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + id).classList.add('active');
+    event.target.classList.add('active');
+  }
+
+  function toggle(header) {
+    const card = header.closest('.ev-card');
+    card.classList.toggle('open');
+  }
+
+  function copyCode(btn) {
+    const code = btn.nextElementSibling.innerText;
+    navigator.clipboard.writeText(code).then(() => {
+      btn.textContent = '✓ Copiado';
+      btn.classList.add('copied');
+      setTimeout(() => { btn.textContent = 'Copiar'; btn.classList.remove('copied'); }, 2000);
+    });
+  }
+</script>
